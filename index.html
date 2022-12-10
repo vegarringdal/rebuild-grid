@@ -7,7 +7,37 @@
         <link href="./index.css" rel="stylesheet" />
        
        
-        <script>import("./index.js")</script>
+        
+    <script>
+      let version = 0;
+      import("./index.js?v=" + version);
+      let connected = false;
+
+      const websocketConnection = function () {
+        const ws = new WebSocket("ws://localhost:8081");
+
+        ws.addEventListener("open", function () {
+          connected = true;
+          ws.send("connect");
+        });
+
+        ws.addEventListener("close", function () {
+          connected = false;
+          console.log("connection lost");
+          websocketConnection();
+        });
+
+        ws.addEventListener("message", function (event) {
+          window.location.reload();
+          
+          version++;
+          import("./index.js?v=" + version);
+        });
+
+
+      };
+      websocketConnection();
+    </script>
       </head>
       <body>
       </body>
